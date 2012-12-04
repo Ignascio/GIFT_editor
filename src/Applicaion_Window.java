@@ -14,6 +14,7 @@ import javax.swing.JRadioButton;
 import java.awt.event.ActionListener;
 import java.awt.event.ActionEvent;
 import javax.swing.JScrollPane;
+import javax.swing.JSpinner;
 
 
 public class Applicaion_Window {
@@ -24,6 +25,8 @@ public class Applicaion_Window {
 	private JTextField textField_2;
 	private JTextField textField_3;
 	private static  Applicaion_Window window;
+	private JTextField textField_4;
+	private JTextField textField_5;
 
 	/**
 	 * Launch the application.
@@ -121,7 +124,7 @@ public class Applicaion_Window {
 		
 		final JPanel panel_8 = new JPanel();
 		scrollPane.setViewportView(panel_8);
-		panel_8.setLayout(new MigLayout("", "[][grow][20][][grow]", "[][][][][][]"));
+		panel_8.setLayout(new MigLayout("", "[][grow][][][grow]", "[][][][][][]"));
 		
 		btnNewButton_3.addActionListener(new ActionListener() {
 			
@@ -159,6 +162,61 @@ public class Applicaion_Window {
 		
 		JPanel panel_1 = new JPanel();
 		tabbedPane.addTab("Multiple Choice", null, panel_1, null);
+		panel_1.setLayout(new MigLayout("", "[][][grow][][]", "[][][][grow][][grow][][][]"));
+		
+		JLabel lblNewLabel_5 = new JLabel("New label");
+		panel_1.add(lblNewLabel_5, "cell 1 1,alignx trailing");
+		
+		textField_4 = new JTextField();
+		panel_1.add(textField_4, "cell 2 1 3 1,growx");
+		textField_4.setColumns(10);
+		
+		JLabel lblNewLabel_6 = new JLabel("New label");
+		panel_1.add(lblNewLabel_6, "cell 1 3,alignx right,aligny top");
+		
+		JTextArea textArea_1 = new JTextArea();
+		panel_1.add(textArea_1, "cell 2 3 3 1,grow");
+		
+		JButton btnNewButton_7 = new JButton("Clear Text");
+		panel_1.add(btnNewButton_7, "cell 4 4");
+		
+		JButton btnNewButton_6 = new JButton("Add Answer");
+		
+		panel_1.add(btnNewButton_6, "cell 0 5,aligny top");
+		
+		JScrollPane scrollPane_1 = new JScrollPane();
+		panel_1.add(scrollPane_1, "cell 2 5 3 1,grow");
+		
+		final JPanel panel_9 = new JPanel();
+		scrollPane_1.setViewportView(panel_9);
+		panel_9.setLayout(new MigLayout("", "[][grow][]", "[]"));
+		
+		
+		btnNewButton_6.addActionListener(new ActionListener() {
+			
+			char letter = 'A';
+			
+			public void actionPerformed(ActionEvent e) {
+				
+				JLabel lblNewLabel_7 = new JLabel(Character.toString(letter));
+				panel_9.add(lblNewLabel_7, "alignx trailing");
+			
+				textField_5 = new JTextField();
+				panel_9.add(textField_5, "growx");
+				textField_5.setColumns(10);
+				
+				JSpinner spinner = new JSpinner();
+				panel_9.add(spinner, "wrap");
+				letter++;
+				window.frame.repaint();
+			}
+		});
+		
+		JButton btnNewButton_8 = new JButton("Save to File");
+		panel_1.add(btnNewButton_8, "cell 0 6");
+		
+		JButton btnNewButton_9 = new JButton("Add Another Multiple Choice");
+		panel_1.add(btnNewButton_9, "cell 0 8 2 1,alignx center");
 		
 		JPanel panel_3 = new JPanel();
 		tabbedPane.addTab("Short Answer", null, panel_3, null);
