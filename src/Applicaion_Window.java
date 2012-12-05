@@ -313,6 +313,7 @@ public class Applicaion_Window {
 		textField_9.setColumns(10);
 		
 		JRadioButton rdbtnNewRadioButton = new JRadioButton("Math range");
+		
 		buttonGroup.add(rdbtnNewRadioButton);
 		panel_4.add(rdbtnNewRadioButton, "flowx,cell 2 4");
 		
@@ -331,6 +332,7 @@ public class Applicaion_Window {
 		panel_11.setBorder(new TitledBorder(null, "Answer", TitledBorder.LEADING, TitledBorder.TOP, null, null));
 		scrollPane_8.setViewportView(panel_11);
 		panel_11.setLayout(new MigLayout("", "[][grow][][]", "[]"));
+		
 		
 		btnNewButton_13.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
@@ -392,6 +394,29 @@ public class Applicaion_Window {
 			public void actionPerformed(ActionEvent e) {
 				panel_11.removeAll();
 				btnNewButton_13.setEnabled(true);
+				window.frame.repaint();
+			}
+		});
+		
+		rdbtnNewRadioButton.addActionListener(new ActionListener() {
+			private JTextField textField_13;
+			private JTextField textField_14;
+			private JTextField textField_15;
+
+			public void actionPerformed(ActionEvent e) {
+				panel_11.removeAll();			
+				textField_13 = new JTextField();
+				panel_11.add(textField_13," growx,spanx");
+				textField_13.setColumns(10);
+				panel_11.add(new JLabel("min"));
+				textField_14 = new JTextField();
+				panel_11.add(textField_14,"growx,wrap, wmax 40px");
+				textField_14.setColumns(5);
+				panel_11.add(new JLabel("max"));
+				textField_15 = new JTextField();
+				panel_11.add(textField_15,"growx, wmax 40px");
+				textField_15.setColumns(10);
+				
 				window.frame.repaint();
 			}
 		});
