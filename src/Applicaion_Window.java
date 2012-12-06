@@ -5,6 +5,8 @@ import javax.swing.JFrame;
 import net.miginfocom.swing.MigLayout;
 import javax.swing.JTabbedPane;
 import java.awt.BorderLayout;
+
+import javax.swing.JFileChooser;
 import javax.swing.JPanel;
 import javax.swing.JLabel;
 import javax.swing.JTextField;
@@ -14,6 +16,9 @@ import javax.swing.JButton;
 import javax.swing.JRadioButton;
 import java.awt.event.ActionListener;
 import java.awt.event.ActionEvent;
+import java.io.File;
+import java.util.ArrayList;
+
 import javax.swing.JScrollPane;
 import javax.swing.JSpinner;
 import javax.swing.JTextPane;
@@ -25,20 +30,31 @@ public class Applicaion_Window {
 	private JFrame frame;
 	private JTextField textField;
 	private JTextField textField_1;
-	private JTextField textField_2;
-	private JTextField textField_3;
 	private static  Applicaion_Window window;
 	private JTextField textField_4;
 	private JTextField textField_5;
 	private JTextField textField_6;
 	private JTextField textField_7;
-	protected Container panel_8;
+	private  Container panel_8;
 	private JTextField textField_8;
 	private JTextField textField_9;
 	private JTextField textField_10;
 	private JTextField textField_11;
 	private final ButtonGroup buttonGroup = new ButtonGroup();
 	private JTextField textField_12;
+	protected JTextField textField_13;
+	protected JTextField textField_14;
+	protected JTextField textField_15;
+	private JTextArea textArea;
+	private JRadioButton rdbtnTrue;
+	private JRadioButton rdbtnFalse;
+	protected static FileIO IO;
+	
+	private static File file;
+	private final ButtonGroup buttonGroup_1 = new ButtonGroup();
+	
+	private ArrayList<Matching> list = new ArrayList<>();;
+	
 
 	/**
 	 * Launch the application.
@@ -49,6 +65,24 @@ public class Applicaion_Window {
 				try {
 					window = new Applicaion_Window();
 					window.frame.setVisible(true);
+					
+//					//promt where to save file
+//					JFileChooser jFileChooser = new JFileChooser();
+//					jFileChooser.setSelectedFile(new File("GIFT.txt"));
+//					 int returnVal = jFileChooser.showSaveDialog(window.frame);
+//					
+//			        if (returnVal == JFileChooser.APPROVE_OPTION) {
+//			            file = jFileChooser.getSelectedFile();
+//			            new File(file.getAbsolutePath()).createNewFile();
+//			            //This is where a real application would open the file.
+//			            
+//			            IO = new FileIO(file.getAbsolutePath(), 2);
+//			            
+//			            System.out.println("Saving: " + file.getName() + ".");	            
+//			        } else {
+//			        	System.out.println("Open command cancelled by user.");
+//			        }
+				        
 				} catch (Exception e) {
 					e.printStackTrace();
 				}
@@ -89,10 +123,30 @@ public class Applicaion_Window {
 		JLabel lblNewLabel_1 = new JLabel("Question");
 		panel.add(lblNewLabel_1, "cell 1 3,alignx right,aligny top");
 		
-		JTextArea textArea = new JTextArea();
+		textArea = new JTextArea();
 		panel.add(textArea, "cell 2 3 4 1,height 70,grow");
 		
+		/*************************************************************
+		 * True/False tab action
+		 * 
+		 *************************************************************/
 		JButton btnNewButton_1 = new JButton("Save to file");
+		btnNewButton_1.addActionListener(new ActionListener() {
+			String Statement = "::T:: Q {A}";
+			public void actionPerformed(ActionEvent e) {
+				
+				
+				String newStatement = "";
+				newStatement= Statement.replace("::T::","::"+textField.getText()+"::");
+				newStatement = newStatement.replace("Q", textArea.getText());
+				if(rdbtnTrue.isSelected()){
+					newStatement = newStatement.replace("{A}","{T}");
+				}else if(rdbtnFalse.isSelected()){
+					newStatement = newStatement.replace("{A}","{F}");
+				}
+				System.out.println(newStatement);
+			}
+		});
 		panel.add(btnNewButton_1, "cell 1 4,alignx center,aligny top");
 		
 		JPanel panel_7 = new JPanel();
@@ -100,18 +154,27 @@ public class Applicaion_Window {
 		panel.add(panel_7, "cell 2 4");
 		panel_7.setLayout(new MigLayout("", "[][][][][][]", "[][][]"));
 		
-		JRadioButton rdbtnTrue = new JRadioButton("True");
+		rdbtnTrue = new JRadioButton("True");
+		buttonGroup_1.add(rdbtnTrue);
 		panel_7.add(rdbtnTrue, "cell 2 2,growx");
 		
-		JRadioButton rdbtnFalse = new JRadioButton("False");
+		rdbtnFalse = new JRadioButton("False");
+		buttonGroup_1.add(rdbtnFalse);
 		panel_7.add(rdbtnFalse, "cell 4 2,growx");
 		
 		JButton btnNewButton = new JButton("Clear Text");
+		btnNewButton.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent e) {
+				textArea.setText("");
+			}
+		});
 		panel.add(btnNewButton, "cell 5 4,aligny top");
 		
 		JButton btnNewButton_2 = new JButton("Add Another");
 		btnNewButton_2.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
+				textField.setText("");
+				textArea.setText("");
 			}
 		});
 		panel.add(btnNewButton_2, "cell 1 5,alignx center");
@@ -139,37 +202,55 @@ public class Applicaion_Window {
 		scrollPane.setViewportView(panel_8);
 		panel_8.setLayout(new MigLayout("", "[][grow][][][grow]", "[][][][][][]"));
 		
+		/*************************************************************
+		 * Matching tab action
+		 * 
+		 *************************************************************/
+		
 		btnNewButton_3.addActionListener(new ActionListener() {
 			
 			char letter = 'A';
 			public void actionPerformed(ActionEvent e) {
-				JLabel lblNewLabel_3 = new JLabel(Character.toString(letter));
-				panel_8.add(lblNewLabel_3, "alignx trailing");
-				
-				textField_2 = new JTextField();
-				panel_8.add(textField_2, "growx");
-				textField_2.setColumns(10);
-				
-				JLabel lblNewLabel_4 = new JLabel(Character.toString(letter));
-				panel_8.add(lblNewLabel_4, "skip,alignx trailing");
-				
-				textField_3 = new JTextField();
-				panel_8.add(textField_3, "growx,wrap");
-				textField_3.setColumns(10);
+				list.add(new Matching(letter,panel_8));
 				letter++;
 				window.frame.repaint();
 			
 			}
 		});
 		
-		
-		
 		JButton btnNewButton_4 = new JButton("Save to File");
 		btnNewButton_4.addActionListener(new ActionListener() {
+			
 			public void actionPerformed(ActionEvent e) {
+				
+				String statment = "Q {";
+				String Matching_statment = "=Q -> A";
+				
+				statment.replace("Q",textField_1.getText());
+				
+				if(!list.isEmpty()){
+					for(Matching i:list){
+						Matching_statment = Matching_statment.replace("=Q", "="+i.getTextField_2().getText());
+						Matching_statment = Matching_statment.replace("A",i.getTextField_3().getText());
+						statment+=" "+Matching_statment;
+						Matching_statment = "=Q -> A";
+					}
+					statment+=" }";
+				}
+				System.out.println(statment);
 			}
 		});
 		panel_2.add(btnNewButton_4, "cell 1 4,sizegroupx 1,sizegroupy 1");
+		
+		JButton btnNewButton_14 = new JButton("Clear All");
+		btnNewButton_14.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent e) {
+				panel_8.removeAll();
+				list.removeAll(list);
+				window.frame.repaint();
+			}
+		});
+		panel_2.add(btnNewButton_14, "cell 4 4 2 1");
 		
 		JButton btnNewButton_5 = new JButton("Add Another");
 		panel_2.add(btnNewButton_5, "cell 1 6,sizegroupx 1,sizegroupy 1");
@@ -399,9 +480,7 @@ public class Applicaion_Window {
 		});
 		
 		rdbtnNewRadioButton.addActionListener(new ActionListener() {
-			private JTextField textField_13;
-			private JTextField textField_14;
-			private JTextField textField_15;
+
 
 			public void actionPerformed(ActionEvent e) {
 				panel_11.removeAll();			
@@ -458,7 +537,152 @@ public class Applicaion_Window {
 		panel_6.add(btnSaveToFile_2, "cell 0 5");
 		
 		JButton btnNewButton_12 = new JButton("Another Essay");
-		panel_6.add(btnNewButton_12, "cell 0 7 2 1");
+		panel_6.add(btnNewButton_12, "cell 0 7 2 1");	
 	}
 
+	public JTextField getTextField() {
+		return textField;
+	}
+
+	public void setTextField(JTextField textField) {
+		this.textField = textField;
+	}
+
+	public JTextField getTextField_1() {
+		return textField_1;
+	}
+
+	public void setTextField_1(JTextField textField_1) {
+		this.textField_1 = textField_1;
+	}
+
+	public JTextField getTextField_4() {
+		return textField_4;
+	}
+
+	public void setTextField_4(JTextField textField_4) {
+		this.textField_4 = textField_4;
+	}
+
+	public JTextField getTextField_5() {
+		return textField_5;
+	}
+
+	public void setTextField_5(JTextField textField_5) {
+		this.textField_5 = textField_5;
+	}
+
+	public JTextField getTextField_6() {
+		return textField_6;
+	}
+
+	public void setTextField_6(JTextField textField_6) {
+		this.textField_6 = textField_6;
+	}
+
+	public JTextField getTextField_7() {
+		return textField_7;
+	}
+
+	public void setTextField_7(JTextField textField_7) {
+		this.textField_7 = textField_7;
+	}
+
+	public JTextField getTextField_8() {
+		return textField_8;
+	}
+
+	public void setTextField_8(JTextField textField_8) {
+		this.textField_8 = textField_8;
+	}
+
+	public JTextField getTextField_9() {
+		return textField_9;
+	}
+
+	public void setTextField_9(JTextField textField_9) {
+		this.textField_9 = textField_9;
+	}
+
+	public JTextField getTextField_10() {
+		return textField_10;
+	}
+
+	public void setTextField_10(JTextField textField_10) {
+		this.textField_10 = textField_10;
+	}
+
+	public JTextField getTextField_11() {
+		return textField_11;
+	}
+
+	public void setTextField_11(JTextField textField_11) {
+		this.textField_11 = textField_11;
+	}
+
+	public JTextField getTextField_12() {
+		return textField_12;
+	}
+
+	public void setTextField_12(JTextField textField_12) {
+		this.textField_12 = textField_12;
+	}
+
+	public JTextField getTextField_13() {
+		return textField_13;
+	}
+
+	public void setTextField_13(JTextField textField_13) {
+		this.textField_13 = textField_13;
+	}
+
+	public JTextField getTextField_14() {
+		return textField_14;
+	}
+
+	public void setTextField_14(JTextField textField_14) {
+		this.textField_14 = textField_14;
+	}
+
+	public JTextField getTextField_15() {
+		return textField_15;
+	}
+
+	public void setTextField_15(JTextField textField_15) {
+		this.textField_15 = textField_15;
+	}
+	
+	//clases
+	
+	class Matching{
+		
+		private JTextField textField_2;
+		private JTextField textField_3;
+
+		public Matching(char letter ,JPanel panel){
+			JLabel lblNewLabel_3 = new JLabel(Character.toString(letter));
+			panel.add(lblNewLabel_3, "alignx trailing");
+			
+			textField_2 = new JTextField();
+			panel.add(textField_2, "growx");
+			textField_2.setColumns(10);
+			
+			JLabel lblNewLabel_4 = new JLabel(Character.toString(letter));
+			panel.add(lblNewLabel_4, "skip,alignx trailing");
+			
+			textField_3 = new JTextField();
+			panel.add(textField_3, "growx,wrap");
+			textField_3.setColumns(10);
+		}
+
+		public JTextField getTextField_2() {
+			return textField_2;
+		}
+
+		public JTextField getTextField_3() {
+			return textField_3;
+		}
+	}
+	
+	
 }
