@@ -1,6 +1,7 @@
 import java.awt.Container;
 import java.awt.EventQueue;
 
+import javax.naming.spi.DirStateFactory.Result;
 import javax.swing.JFrame;
 import net.miginfocom.swing.MigLayout;
 import javax.swing.JTabbedPane;
@@ -11,6 +12,8 @@ import javax.swing.JPanel;
 import javax.swing.JLabel;
 import javax.swing.JTextField;
 import javax.swing.JTextArea;
+import javax.swing.SpinnerModel;
+import javax.swing.SpinnerNumberModel;
 import javax.swing.border.TitledBorder;
 import javax.swing.JButton;
 import javax.swing.JRadioButton;
@@ -32,9 +35,7 @@ public class Applicaion_Window {
 	private JTextField textField_1;
 	private static  Applicaion_Window window;
 	private JTextField textField_4;
-	private JTextField textField_5;
 	private JTextField textField_6;
-	private JTextField textField_7;
 	private  Container panel_8;
 	private JTextField textField_8;
 	private JTextField textField_9;
@@ -53,7 +54,10 @@ public class Applicaion_Window {
 	private static File file;
 	private final ButtonGroup buttonGroup_1 = new ButtonGroup();
 	
-	private ArrayList<Matching> list = new ArrayList<>();;
+	private ArrayList<Matching> list = new ArrayList<>();
+	private ArrayList<Multichoice> list1 = new ArrayList<>();
+	private ArrayList<shortAnswer> list2 = new ArrayList<>();
+	private JTextArea textArea_1;  
 	
 
 	/**
@@ -223,19 +227,19 @@ public class Applicaion_Window {
 			
 			public void actionPerformed(ActionEvent e) {
 				
-				String statment = "Q {";
-				String Matching_statment = "=Q -> A";
+				String statment = "Q {\n";
+				String Matching_statment = "=Q -> A \n";
 				
-				statment.replace("Q",textField_1.getText());
+				statment = statment.replace("Q",textField_1.getText());
 				
 				if(!list.isEmpty()){
 					for(Matching i:list){
 						Matching_statment = Matching_statment.replace("=Q", "="+i.getTextField_2().getText());
 						Matching_statment = Matching_statment.replace("A",i.getTextField_3().getText());
 						statment+=" "+Matching_statment;
-						Matching_statment = "=Q -> A";
+						Matching_statment = "=Q -> A \n";
 					}
-					statment+=" }";
+					statment+="}";
 				}
 				System.out.println(statment);
 			}
@@ -253,63 +257,15 @@ public class Applicaion_Window {
 		panel_2.add(btnNewButton_14, "cell 4 4 2 1");
 		
 		JButton btnNewButton_5 = new JButton("Add Another");
+		btnNewButton_5.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent e) {
+				textField_1.setText("");
+				panel_8.removeAll();
+				list.removeAll(list);
+				window.frame.repaint();
+			}
+		});
 		panel_2.add(btnNewButton_5, "cell 1 6,sizegroupx 1,sizegroupy 1");
-		
-		JPanel panel_3 = new JPanel();
-		tabbedPane.addTab("Short Answer", null, panel_3, null);
-		panel_3.setLayout(new MigLayout("", "[][][grow][][]", "[][][][grow][grow][][][]"));
-		
-		JLabel lblNewLabel_8 = new JLabel("Question Title(Optional)");
-		panel_3.add(lblNewLabel_8, "cell 0 1 2 1,alignx trailing");
-		
-		textField_6 = new JTextField();
-		panel_3.add(textField_6, "cell 2 1 3 1,growx");
-		textField_6.setColumns(10);
-		
-		JLabel lblNewLabel_9 = new JLabel("Question");
-		panel_3.add(lblNewLabel_9, "cell 1 3,aligny top");
-		
-		JScrollPane scrollPane_3 = new JScrollPane();
-		panel_3.add(scrollPane_3, "cell 2 3 3 1,grow");
-		
-		JTextPane textPane = new JTextPane();
-		scrollPane_3.setViewportView(textPane);
-		
-		JButton btnAddAnswer = new JButton("Add Answer");
-		
-				panel_3.add(btnAddAnswer, "cell 0 4,aligny top");
-				
-				JScrollPane scrollPane_4 = new JScrollPane();
-				panel_3.add(scrollPane_4, "cell 2 4 3 1,grow");
-				
-				final JPanel panel_10 = new JPanel();
-				scrollPane_4.setViewportView(panel_10);
-				panel_10.setLayout(new MigLayout("", "[][grow]", "[]"));
-				
-				
-				btnAddAnswer.addActionListener(new ActionListener() {
-					char num = '1';
-					public void actionPerformed(ActionEvent e) {
-						
-						JLabel lblNewLabel_10 = new JLabel(Character.toString(num++));
-						panel_10.add(lblNewLabel_10, "alignx trailing");
-						
-						textField_7 = new JTextField();
-						panel_10.add(textField_7, "growx,wrap");
-						textField_7.setColumns(10);
-						window.frame.repaint();
-					}
-				});
-				
-				JButton btnSaveToFile = new JButton("Save to File");
-				panel_3.add(btnSaveToFile, "cell 0 5");
-				
-				JButton btnNewButton_10 = new JButton("Add Another");
-				btnNewButton_10.addActionListener(new ActionListener() {
-					public void actionPerformed(ActionEvent e) {
-					}
-				});
-				panel_3.add(btnNewButton_10, "cell 0 7 2 1,alignx left");
 		
 		JPanel panel_1 = new JPanel();
 		tabbedPane.addTab("Multiple Choice", null, panel_1, null);
@@ -327,19 +283,24 @@ public class Applicaion_Window {
 		
 		JScrollPane scrollPane_2 = new JScrollPane();
 		panel_1.add(scrollPane_2, "cell 2 3 3 1,grow");
-		
-		JTextArea textArea_1 = new JTextArea(5,1);
+	
+		textArea_1 = new JTextArea(5,1);
 		scrollPane_2.setViewportView(textArea_1);
 		
 		JButton btnNewButton_7 = new JButton("Clear Text");
-		panel_1.add(btnNewButton_7, "cell 4 4");
+		btnNewButton_7.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent e) {
+				textArea_1.setText("");
+			}
+		});
+		panel_1.add(btnNewButton_7, "cell 4 4,sizegroupx 3,sizegroupy 3");
 		
 		JButton btnNewButton_6 = new JButton("Add Answer");
 		
-		panel_1.add(btnNewButton_6, "cell 0 5,aligny top");
+		panel_1.add(btnNewButton_6, "cell 0 5 2 1,aligny top");
 		
 		JScrollPane scrollPane_1 = new JScrollPane();
-		panel_1.add(scrollPane_1, "cell 2 5 3 1,grow");
+		panel_1.add(scrollPane_1, "cell 2 5 3 1,height 130px::130px,grow");
 		
 		final JPanel panel_9 = new JPanel();
 		scrollPane_1.setViewportView(panel_9);
@@ -352,25 +313,138 @@ public class Applicaion_Window {
 			
 			public void actionPerformed(ActionEvent e) {
 				
-				JLabel lblNewLabel_7 = new JLabel(Character.toString(letter));
-				panel_9.add(lblNewLabel_7, "alignx trailing");
-			
-				textField_5 = new JTextField();
-				panel_9.add(textField_5, "growx");
-				textField_5.setColumns(10);
-				
-				JSpinner spinner = new JSpinner();
-				panel_9.add(spinner, "wrap");
+				list1.add(new Multichoice(letter,panel_9));
 				letter++;
 				window.frame.repaint();
 			}
 		});
 		
 		JButton btnNewButton_8 = new JButton("Save to File");
-		panel_1.add(btnNewButton_8, "cell 0 6");
+		btnNewButton_8.addActionListener(new ActionListener() {
+			
+			public void actionPerformed(ActionEvent e) {
+				
+				String statement = "::T:: Q { ";
+				String partial_multi_statement = "~%P%A";
+				String correct_mulit_statement = "=A";
+				
+				statement = statement.replace("::T::", "::"+textField_4.getText()+"::");
+			    statement = statement.replace("Q", textArea_1.getText());
+				if(!list1.isEmpty()){
+					for(Multichoice i: list1){
+						if(i.getSpinnerValue() < 100){
+							partial_multi_statement = partial_multi_statement.replace("P", Integer.toString(i.getSpinnerValue()));
+							partial_multi_statement = partial_multi_statement.replace("A", i.textField_5.getText());
+							statement+=partial_multi_statement;
+							partial_multi_statement = "~%P%A";
+						}else if (i.getSpinnerValue() == 100){
+							correct_mulit_statement = correct_mulit_statement.replace("A",i.textField_5.getText());
+							statement+=correct_mulit_statement;
+							correct_mulit_statement = "=A";
+						}
+						statement+=" ";
+					}
+					statement+="}";
+				}
+				System.out.println(statement);
+			}
+		});
+		panel_1.add(btnNewButton_8, "cell 0 6 2 1");
 		
-		JButton btnNewButton_9 = new JButton("Add Another Multiple Choice");
-		panel_1.add(btnNewButton_9, "cell 0 8 2 1,alignx center");
+		JButton btnNewButton_17 = new JButton("Clear All");
+		btnNewButton_17.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent e) {
+				panel_9.removeAll();
+				list1.removeAll(list1);
+				window.frame.repaint();
+			}
+		});
+		panel_1.add(btnNewButton_17, "cell 4 6,sizegroupx 3,sizegroupy 3");
+		
+		JButton btnNewButton_9 = new JButton("Add Another");
+		btnNewButton_9.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent e) {
+				panel_9.removeAll();
+				list1.removeAll(list1);
+				window.frame.repaint();
+				textArea_1.setText("");
+				textField_4.setText("");
+			}
+		});
+		panel_1.add(btnNewButton_9, "cell 0 8 2 1,alignx left");
+		
+		JPanel panel_3 = new JPanel();
+		tabbedPane.addTab("Short Answer", null, panel_3, null);
+		panel_3.setLayout(new MigLayout("", "[][][grow][][]", "[][][][87.00,grow][45.00][132.00,grow][][6.00][]"));
+		
+		JLabel lblNewLabel_8 = new JLabel("Question Title(Optional)");
+		panel_3.add(lblNewLabel_8, "cell 0 1 2 1,alignx trailing");
+		
+		textField_6 = new JTextField();
+		panel_3.add(textField_6, "cell 2 1 3 1,growx");
+		textField_6.setColumns(10);
+		
+		JLabel lblNewLabel_9 = new JLabel("Question");
+		panel_3.add(lblNewLabel_9, "cell 1 3,alignx right,aligny top");
+		
+		JScrollPane scrollPane_3 = new JScrollPane();
+		panel_3.add(scrollPane_3, "cell 2 3 3 1,grow");
+		
+		final JTextPane textPane = new JTextPane();
+		scrollPane_3.setViewportView(textPane);
+		
+		JButton btnNewButton_16 = new JButton("Clear Text");
+		btnNewButton_16.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent e) {
+				textPane.setText("");
+			}
+		});
+		panel_3.add(btnNewButton_16, "cell 3 4 2 1,sizegroupx 2,sizegroupy 2");
+		
+		JButton btnAddAnswer = new JButton("Add Answer");
+		
+		panel_3.add(btnAddAnswer, "cell 0 5 2 1,aligny top");
+		
+		JScrollPane scrollPane_4 = new JScrollPane();
+		panel_3.add(scrollPane_4, "cell 2 5 3 1,height 130px::130px,grow");
+		
+		final JPanel panel_10 = new JPanel();
+		scrollPane_4.setViewportView(panel_10);
+		panel_10.setLayout(new MigLayout("", "[][grow]", "[]"));
+		
+		
+		btnAddAnswer.addActionListener(new ActionListener() {
+			char num = '1';
+			public void actionPerformed(ActionEvent e) {
+				list2.add(new shortAnswer(num++, panel_10));
+				window.frame.repaint();
+			}
+		});
+		
+		JButton btnSaveToFile = new JButton("Save to File");
+		panel_3.add(btnSaveToFile, "cell 0 6 2 1");
+		
+		JButton btnNewButton_10 = new JButton("Add Another");
+		btnNewButton_10.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent e) {
+				list2.removeAll(list2);
+				panel_10.removeAll();
+				textPane.setText("");
+				textField_6.setText("");
+				window.frame.repaint();
+			}
+		});
+		
+		JButton btnNewButton_15 = new JButton("Clear All");
+		btnNewButton_15.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent e) {
+				list2.removeAll(list2);
+				panel_10.removeAll();
+				window.frame.repaint();
+			}
+		});
+		panel_3.add(btnNewButton_15, "cell 3 6 2 1,sizegroupx 2,sizegroupy 2");
+		panel_3.add(btnNewButton_10, "cell 0 8 2 1,alignx left");
 		
 		JPanel panel_4 = new JPanel();
 		tabbedPane.addTab("Numerical", null, panel_4, null);
@@ -564,28 +638,12 @@ public class Applicaion_Window {
 		this.textField_4 = textField_4;
 	}
 
-	public JTextField getTextField_5() {
-		return textField_5;
-	}
-
-	public void setTextField_5(JTextField textField_5) {
-		this.textField_5 = textField_5;
-	}
-
 	public JTextField getTextField_6() {
 		return textField_6;
 	}
 
 	public void setTextField_6(JTextField textField_6) {
 		this.textField_6 = textField_6;
-	}
-
-	public JTextField getTextField_7() {
-		return textField_7;
-	}
-
-	public void setTextField_7(JTextField textField_7) {
-		this.textField_7 = textField_7;
 	}
 
 	public JTextField getTextField_8() {
@@ -684,5 +742,41 @@ public class Applicaion_Window {
 		}
 	}
 	
+	class Multichoice{
+		
+		private JTextField textField_5;
+		private JSpinner spinner;
+
+		public Multichoice(char letter ,JPanel panel){
+			JLabel lblNewLabel_7 = new JLabel(Character.toString(letter));
+			panel.add(lblNewLabel_7, "alignx trailing");
+
+			textField_5 = new JTextField();
+			panel.add(textField_5, "growx");
+			textField_5.setColumns(10);
+			
+			SpinnerModel sm = new SpinnerNumberModel(0, 0, 100, 1);
+			spinner = new JSpinner(sm);
+
+			panel.add(spinner, "wrap");
+		}
+		
+		public int getSpinnerValue(){
+			 return Integer.parseInt(spinner.getValue().toString());
+		}
+	}
 	
+	class shortAnswer{
+	
+		private JTextField textField_7;
+
+		public shortAnswer(char letter ,JPanel panel){
+			JLabel lblNewLabel_10 = new JLabel(Character.toString(letter));
+			panel.add(lblNewLabel_10, "alignx trailing");
+			
+			textField_7 = new JTextField();
+			panel.add(textField_7, "growx,wrap");
+			textField_7.setColumns(10);
+		}
+	}
 }
