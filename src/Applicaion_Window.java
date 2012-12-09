@@ -20,6 +20,7 @@ import javax.swing.JRadioButton;
 import java.awt.event.ActionListener;
 import java.awt.event.ActionEvent;
 import java.io.File;
+import java.io.FileNotFoundException;
 import java.util.ArrayList;
 
 import javax.swing.JScrollPane;
@@ -38,11 +39,9 @@ public class Applicaion_Window {
 	private JTextField textField_6;
 	private  Container panel_8;
 	private JTextField textField_8;
-	private JTextField textField_9;
 	private JTextField textField_10;
 	private JTextField textField_11;
 	private final ButtonGroup buttonGroup = new ButtonGroup();
-	private JTextField textField_12;
 	protected JTextField textField_13;
 	protected JTextField textField_14;
 	protected JTextField textField_15;
@@ -57,7 +56,9 @@ public class Applicaion_Window {
 	private ArrayList<Matching> list = new ArrayList<>();
 	private ArrayList<Multichoice> list1 = new ArrayList<>();
 	private ArrayList<shortAnswer> list2 = new ArrayList<>();
-	private JTextArea textArea_1;  
+	private ArrayList<NumericalMultiple> list3 = new ArrayList<>();
+	private JTextArea textArea_1;
+	protected JSpinner spinner10;  
 	
 
 	/**
@@ -70,22 +71,22 @@ public class Applicaion_Window {
 					window = new Applicaion_Window();
 					window.frame.setVisible(true);
 					
-//					//promt where to save file
-//					JFileChooser jFileChooser = new JFileChooser();
-//					jFileChooser.setSelectedFile(new File("GIFT.txt"));
-//					 int returnVal = jFileChooser.showSaveDialog(window.frame);
-//					
-//			        if (returnVal == JFileChooser.APPROVE_OPTION) {
-//			            file = jFileChooser.getSelectedFile();
-//			            new File(file.getAbsolutePath()).createNewFile();
-//			            //This is where a real application would open the file.
-//			            
-//			            IO = new FileIO(file.getAbsolutePath(), 2);
-//			            
-//			            System.out.println("Saving: " + file.getName() + ".");	            
-//			        } else {
-//			        	System.out.println("Open command cancelled by user.");
-//			        }
+					//promt where to save file
+					JFileChooser jFileChooser = new JFileChooser();
+					jFileChooser.setSelectedFile(new File("GIFT.txt"));
+					 int returnVal = jFileChooser.showSaveDialog(window.frame);
+					
+			        if (returnVal == JFileChooser.APPROVE_OPTION) {
+			            file = jFileChooser.getSelectedFile();
+			            new File(file.getAbsolutePath()).createNewFile();
+			            //This is where a real application would open the file.
+			            
+			            IO = new FileIO(file.getAbsolutePath(), 2);
+			            
+			            System.out.println("Saving: " + file.getName() + ".");	            
+			        } else {
+			        	System.out.println("Open command cancelled by user.");
+			        }
 				        
 				} catch (Exception e) {
 					e.printStackTrace();
@@ -136,19 +137,26 @@ public class Applicaion_Window {
 		 *************************************************************/
 		JButton btnNewButton_1 = new JButton("Save to file");
 		btnNewButton_1.addActionListener(new ActionListener() {
-			String Statement = "::T:: Q {A}";
+			String Statement = "::*T>:: *Q> {*A>}";
 			public void actionPerformed(ActionEvent e) {
-				
-				
+
 				String newStatement = "";
-				newStatement= Statement.replace("::T::","::"+textField.getText()+"::");
-				newStatement = newStatement.replace("Q", textArea.getText());
+				newStatement= Statement.replace("::*T>::","::"+textField.getText()+"::");
+				newStatement = newStatement.replace("*Q>", textArea.getText());
 				if(rdbtnTrue.isSelected()){
-					newStatement = newStatement.replace("{A}","{T}");
+					newStatement = newStatement.replace("{*A>}","{T}");
 				}else if(rdbtnFalse.isSelected()){
-					newStatement = newStatement.replace("{A}","{F}");
+					newStatement = newStatement.replace("{*A>}","{F}");
 				}
 				System.out.println(newStatement);
+				
+				try {
+					IO.writeLine(newStatement+"\n");
+				} catch (FileNotFoundException e1) {
+					// TODO Auto-generated catch block
+					e1.printStackTrace();
+				}
+				
 			}
 		});
 		panel.add(btnNewButton_1, "cell 1 4,alignx center,aligny top");
@@ -187,8 +195,8 @@ public class Applicaion_Window {
 		tabbedPane.addTab("Matching", null, panel_2, null);
 		panel_2.setLayout(new MigLayout("", "[][][grow][][][][]", "[][][][50,grow][][][]"));
 		
-		JLabel lblNewLabel_2 = new JLabel("Question Title(Optional)");
-		panel_2.add(lblNewLabel_2, "cell 0 1 2 1");
+		JLabel lblNewLabel_2 = new JLabel("Question");
+		panel_2.add(lblNewLabel_2, "cell 0 1 2 1,alignx right");
 		
 		textField_1 = new JTextField();
 		panel_2.add(textField_1, "cell 2 1 5 1,growx");
@@ -227,20 +235,29 @@ public class Applicaion_Window {
 			
 			public void actionPerformed(ActionEvent e) {
 				
-				String statment = "Q {\n";
-				String Matching_statment = "=Q -> A \n";
+				String statment = "*Q> {\n";
 				
-				statment = statment.replace("Q",textField_1.getText());
+				String Matching_statment = "=*Q> -> *A>";	
+
+				statment = statment.replace("*Q>",textField_1.getText());
 				
 				if(!list.isEmpty()){
 					for(Matching i:list){
-						Matching_statment = Matching_statment.replace("=Q", "="+i.getTextField_2().getText());
-						Matching_statment = Matching_statment.replace("A",i.getTextField_3().getText());
+						Matching_statment = Matching_statment.replace("=*Q>", "="+i.getTextField_2().getText());
+						Matching_statment = Matching_statment.replace("*A>",i.getTextField_3().getText());
 						statment+=" "+Matching_statment;
-						Matching_statment = "=Q -> A \n";
+						Matching_statment = "=*Q> -> *A>";
 					}
 					statment+="}";
 				}
+				
+				try {
+					IO.writeLine(statment+"\n");
+				} catch (FileNotFoundException e1) {
+					// TODO Auto-generated catch block
+					e1.printStackTrace();
+				}
+				
 				System.out.println(statment);
 			}
 		});
@@ -324,12 +341,12 @@ public class Applicaion_Window {
 			
 			public void actionPerformed(ActionEvent e) {
 				
-				String statement = "::T:: Q { ";
+				String statement = "::*T>:: *Q> { ";
 				String partial_multi_statement = "~%P%A";
 				String correct_mulit_statement = "=A";
 				
-				statement = statement.replace("::T::", "::"+textField_4.getText()+"::");
-			    statement = statement.replace("Q", textArea_1.getText());
+				statement = statement.replace("::*T>::", "::"+textField_4.getText()+"::");
+			    statement = statement.replace("*Q>", textArea_1.getText());
 				if(!list1.isEmpty()){
 					for(Multichoice i: list1){
 						if(i.getSpinnerValue() < 100){
@@ -347,6 +364,13 @@ public class Applicaion_Window {
 					statement+="}";
 				}
 				System.out.println(statement);
+				
+				try {
+					IO.writeLine(statement+"\n");
+				} catch (FileNotFoundException e1) {
+					// TODO Auto-generated catch block
+					e1.printStackTrace();
+				}
 			}
 		});
 		panel_1.add(btnNewButton_8, "cell 0 6 2 1");
@@ -422,6 +446,32 @@ public class Applicaion_Window {
 		});
 		
 		JButton btnSaveToFile = new JButton("Save to File");
+		btnSaveToFile.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent e) {
+				String Statement  = "::*T>:: *Q> {";
+				String Answer_statement = "=A";
+				
+				Statement = Statement.replace("*T>", textField_6.getText());
+				Statement = Statement.replace("*Q>",textPane.getText());
+				
+				if(!list2.isEmpty()){
+					for(shortAnswer i: list2){
+						Answer_statement = Answer_statement.replace("A", i.textField_7.getText());
+						Statement+= Answer_statement;
+						Answer_statement = "=A";
+						Statement+=" ";
+					}
+					Statement+= "}";
+				}
+				System.out.println(Statement);
+				try {
+					IO.writeLine(Statement);
+				} catch (FileNotFoundException e1) {
+					// TODO Auto-generated catch block
+					e1.printStackTrace();
+				}
+			}
+		});
 		panel_3.add(btnSaveToFile, "cell 0 6 2 1");
 		
 		JButton btnNewButton_10 = new JButton("Add Another");
@@ -448,39 +498,46 @@ public class Applicaion_Window {
 		
 		JPanel panel_4 = new JPanel();
 		tabbedPane.addTab("Numerical", null, panel_4, null);
-		panel_4.setLayout(new MigLayout("", "[][][grow][]", "[][][][grow][25.00][grow][][][]"));
+		panel_4.setLayout(new MigLayout("", "[][][grow][][][]", "[][][][54.00,grow][26.00][33.00][grow][][][]"));
 		
 		JLabel lblNewLabel_11 = new JLabel("Question Title(Optional)");
 		panel_4.add(lblNewLabel_11, "cell 0 1 2 1,alignx trailing");
 		
 		textField_8 = new JTextField();
-		panel_4.add(textField_8, "cell 2 1 2 1,growx");
+		panel_4.add(textField_8, "cell 2 1 4 1,growx");
 		textField_8.setColumns(10);
 		
 		JLabel lblNewLabel_12 = new JLabel("Question");
 		panel_4.add(lblNewLabel_12, "cell 1 3,alignx right,aligny top");
 		
 		JScrollPane scrollPane_5 = new JScrollPane();
-		panel_4.add(scrollPane_5, "cell 2 3 2 1,grow");
+		panel_4.add(scrollPane_5, "cell 2 3 4 1,grow");
 		
-		textField_9 = new JTextField();
-		scrollPane_5.setViewportView(textField_9);
-		textField_9.setColumns(10);
+		final JTextArea textArea_4 = new JTextArea();
+		scrollPane_5.setViewportView(textArea_4);
 		
-		JRadioButton rdbtnNewRadioButton = new JRadioButton("Math range");
+		JButton btnNewButton_19 = new JButton("Clear Text");
+		btnNewButton_19.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent e) {
+				textArea_4.setText("");
+			}
+		});
+		panel_4.add(btnNewButton_19, "cell 2 4 4 1,alignx right");
+		
+		final JRadioButton rdbtnNewRadioButton = new JRadioButton("Math range");
 		
 		buttonGroup.add(rdbtnNewRadioButton);
-		panel_4.add(rdbtnNewRadioButton, "flowx,cell 2 4");
+		panel_4.add(rdbtnNewRadioButton, "flowx,cell 2 5");
 		
 		final JButton btnNewButton_13 = new JButton("Add Q&A");
 		btnNewButton_13.setEnabled(false);
 		
-		panel_4.add(btnNewButton_13, "cell 0 5,aligny top");
+		panel_4.add(btnNewButton_13, "cell 0 6,aligny top");
 		
 		
 		
 		JScrollPane scrollPane_8 = new JScrollPane();
-		panel_4.add(scrollPane_8, "cell 2 5 2 1,grow,hmin 130px,hmax 130px");
+		panel_4.add(scrollPane_8, "cell 2 6 4 1,height 130px::130px,grow");
 		
 		
 		final JPanel panel_11 = new JPanel();
@@ -490,20 +547,12 @@ public class Applicaion_Window {
 		
 		
 		btnNewButton_13.addActionListener(new ActionListener() {
+			char letter = '1';
+			
 			public void actionPerformed(ActionEvent e) {
 				
-//				panel_11.removeAll();
-				
-				JLabel lblNewLabel_15 = new JLabel("New label");
-				panel_11.add(lblNewLabel_15, "alignx trailing");
-				
-				textField_12 = new JTextField();
-				panel_11.add(textField_12, "span 2,growx");
-				textField_12.setColumns(10);
-				
-				JSpinner spinner_1 = new JSpinner();
-				panel_11.add(spinner_1, "wrap");
-				
+				list3.add(new NumericalMultiple(letter++, panel_11));
+
 				window.frame.repaint();
 			}
 		});
@@ -511,19 +560,37 @@ public class Applicaion_Window {
 		
 			
 		JButton btnSaveToFile_1 = new JButton("Save to File");
-		panel_4.add(btnSaveToFile_1, "cell 0 6");
+		
+		panel_4.add(btnSaveToFile_1, "cell 0 7");
 		
 		JButton btnNewButton_11 = new JButton("Another Numerical");
 		btnNewButton_11.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
+				panel_11.removeAll();
+				list3.removeAll(list3);
+				textArea_4.setText("");
+				textField_8.setText("");
+				window.frame.repaint();
 			}
 		});
-		panel_4.add(btnNewButton_11, "cell 0 8 2 1");
 		
-		JRadioButton rdbtnNewRadioButton_1 = new JRadioButton("Math Range (interval end points)");
+		final JButton btnNewButton_18 = new JButton("Clear All");
+		btnNewButton_18.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent e) {
+				panel_11.removeAll();
+				list3.removeAll(list3);
+				window.frame.repaint();
+			}
+		});
+		panel_4.add(btnNewButton_18, "cell 2 7 4 1,alignx right");
+		panel_4.add(btnNewButton_11, "cell 0 9 2 1");
+		
+		final JRadioButton rdbtnNewRadioButton_1 = new JRadioButton("Math Range (interval end points)");
 		rdbtnNewRadioButton_1.addActionListener(new ActionListener() {
+
 			public void actionPerformed(ActionEvent e) {
 				
+				btnNewButton_18.setEnabled(false);
 				panel_11.removeAll();
 				
 				btnNewButton_13.setEnabled(false);
@@ -534,22 +601,82 @@ public class Applicaion_Window {
 				
 				JLabel lblDecimalPlace = new JLabel("Decimal Place");
 				panel_11.add(lblDecimalPlace, "alignx left");
-				
-				JSpinner spinner = new JSpinner();
-				panel_11.add(spinner, "growx,wrap");
+				SpinnerModel sm = new SpinnerNumberModel(0, 0, 10, 0.01);
+				spinner10 = new JSpinner(sm);
+				panel_11.add(spinner10, "growx,wrap");
 				
 				window.frame.repaint();
 			}
 		});
-		buttonGroup.add(rdbtnNewRadioButton_1);
-		panel_4.add(rdbtnNewRadioButton_1, "cell 2 4");
 		
-		JRadioButton rdbtnNewRadioButton_2 = new JRadioButton("Multiple numeric");
+		buttonGroup.add(rdbtnNewRadioButton_1);
+		panel_4.add(rdbtnNewRadioButton_1, "cell 2 5");
+		
+		final JRadioButton rdbtnNewRadioButton_2 = new JRadioButton("Multiple numeric");
 		rdbtnNewRadioButton_2.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
+				btnNewButton_18.setEnabled(true);
 				panel_11.removeAll();
 				btnNewButton_13.setEnabled(true);
 				window.frame.repaint();
+			}
+		});
+		
+		btnSaveToFile_1.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent e) {
+				if(rdbtnNewRadioButton.isSelected()){		    //math range
+					String Statement = "::*T>:: *Q> {#MIN..MAX}.";
+					Statement = Statement.replace("*T>",textField_8.getText());
+					Statement = Statement.replace("*Q>",textArea_4.getText());
+					Statement = Statement.replace("MIN",textField_14.getText());
+					Statement = Statement.replace("MAX",textField_15.getText());
+					
+					System.out.println(Statement);
+				}
+				else if(rdbtnNewRadioButton_1.isSelected()){	// math range with specified intervals
+					String Statement = "::*T>:: *Q> {#*V>:*D>}.";
+					Statement = Statement.replace("*T>", textField_8.getText());
+					Statement = Statement.replace("*Q>", textArea_4.getText());
+					Statement = Statement.replace("*V>", textField_10.getText());
+					Statement = Statement.replace("*D>", spinner10.getValue().toString());
+					
+					System.out.println(Statement);
+				}
+				else if(rdbtnNewRadioButton_2.isSelected()){	// math mulitchoice
+					String Statement = "::*T>:: *Q> {# \n";
+					String AnswerRight_statement = "=*A> "; //:D";
+					String AnswerPartial_statement = "=%*P>%*A> "; //:D";
+					
+					Statement = Statement.replace("*T>",textField_8.getText());
+					Statement = Statement.replace("*Q>",textArea_4.getText());
+					
+					if(!list3.isEmpty()){
+						for(NumericalMultiple i: list3){
+							if(Integer.parseInt(i.spinner_1.getValue().toString())<100){
+								AnswerPartial_statement = AnswerPartial_statement.replace("*P>",i.spinner_1.getValue().toString());
+								AnswerPartial_statement = AnswerPartial_statement.replace("*A>", i.textField_12.getText());
+								Statement+=AnswerPartial_statement+"\n";
+								AnswerPartial_statement = "=%*P>%*A> ";  //:D";
+							}
+							else if(Integer.parseInt(i.spinner_1.getValue().toString())==100){
+								AnswerRight_statement = AnswerRight_statement.replace("*A>", i.textField_12.getText());
+//								AnswerRight_statement = AnswerRight_statement.replace("D", i.spinner_1.getValue().toString());
+								Statement+=AnswerRight_statement+"\n";
+								AnswerRight_statement = "=*A> ";
+							}
+						}
+						Statement+="}";
+						System.out.println(Statement);
+						
+						try {
+							IO.writeLine(Statement+"\n");
+						} catch (FileNotFoundException e1) {
+							// TODO Auto-generated catch block
+							e1.printStackTrace();
+						}
+					}
+				}
+				
 			}
 		});
 		
@@ -557,10 +684,8 @@ public class Applicaion_Window {
 
 
 			public void actionPerformed(ActionEvent e) {
+				btnNewButton_18.setEnabled(false);
 				panel_11.removeAll();			
-				textField_13 = new JTextField();
-				panel_11.add(textField_13," growx,spanx");
-				textField_13.setColumns(10);
 				panel_11.add(new JLabel("min"));
 				textField_14 = new JTextField();
 				panel_11.add(textField_14,"growx,wrap, wmax 40px");
@@ -574,11 +699,11 @@ public class Applicaion_Window {
 			}
 		});
 		buttonGroup.add(rdbtnNewRadioButton_2);
-		panel_4.add(rdbtnNewRadioButton_2, "cell 2 4");
+		panel_4.add(rdbtnNewRadioButton_2, "cell 2 5");
 		
 		JPanel panel_6 = new JPanel();
 		tabbedPane.addTab("Essay", null, panel_6, null);
-		panel_6.setLayout(new MigLayout("", "[][][grow][]", "[][][][grow][grow][][][]"));
+		panel_6.setLayout(new MigLayout("", "[][][grow][]", "[][][][116.00,grow][][]"));
 		
 		JLabel lblNewLabel_13 = new JLabel("Question Title(Optional)");
 		panel_6.add(lblNewLabel_13, "cell 0 1 2 1,alignx trailing");
@@ -593,25 +718,43 @@ public class Applicaion_Window {
 		JScrollPane scrollPane_6 = new JScrollPane();
 		panel_6.add(scrollPane_6, "cell 2 3 2 1,grow");
 		
-		JTextArea textArea_2 = new JTextArea();
+		final JTextArea textArea_2 = new JTextArea();
 		scrollPane_6.setViewportView(textArea_2);
 		
-		JPanel panel_5 = new JPanel();
-		panel_5.setBorder(new TitledBorder(null, "Answer", TitledBorder.LEADING, TitledBorder.TOP, null, null));
-		panel_6.add(panel_5, "cell 2 4 2 1,grow");
-		panel_5.setLayout(new BorderLayout(0, 0));
-		
-		JScrollPane scrollPane_7 = new JScrollPane();
-		panel_5.add(scrollPane_7, BorderLayout.CENTER);
-		
-		JTextArea textArea_3 = new JTextArea();
-		scrollPane_7.setViewportView(textArea_3);
-		
-		JButton btnSaveToFile_2 = new JButton("Save to File");
-		panel_6.add(btnSaveToFile_2, "cell 0 5");
+		JButton btnNewButton_21 = new JButton("Save to File");
+		btnNewButton_21.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent e) {
+				String Statement = "::*T>:: *Q> {}";
+				Statement = Statement.replace("*T>", textField_11.getText());
+				Statement = Statement.replace("*Q>", textArea_2.getText());
+				
+				try {
+					IO.writeLine(Statement);
+				} catch (FileNotFoundException e1) {
+					// TODO Auto-generated catch block
+					e1.printStackTrace();
+				}
+				System.out.println(Statement);
+			}
+		});
+		panel_6.add(btnNewButton_21, "cell 0 4 2 1");
 		
 		JButton btnNewButton_12 = new JButton("Another Essay");
-		panel_6.add(btnNewButton_12, "cell 0 7 2 1");	
+		btnNewButton_12.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent e) {
+				textField_11.setText("");
+				textArea_2.setText("");
+			}
+		});
+		panel_6.add(btnNewButton_12, "cell 0 5 2 1");	
+		
+		JButton btnNewButton_20 = new JButton("Clear Text");
+		btnNewButton_20.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent e) {
+				textArea_2.setText("");
+			}
+		});
+		panel_6.add(btnNewButton_20, "cell 2 5 2 1,alignx right");
 	}
 
 	public JTextField getTextField() {
@@ -654,14 +797,6 @@ public class Applicaion_Window {
 		this.textField_8 = textField_8;
 	}
 
-	public JTextField getTextField_9() {
-		return textField_9;
-	}
-
-	public void setTextField_9(JTextField textField_9) {
-		this.textField_9 = textField_9;
-	}
-
 	public JTextField getTextField_10() {
 		return textField_10;
 	}
@@ -676,14 +811,6 @@ public class Applicaion_Window {
 
 	public void setTextField_11(JTextField textField_11) {
 		this.textField_11 = textField_11;
-	}
-
-	public JTextField getTextField_12() {
-		return textField_12;
-	}
-
-	public void setTextField_12(JTextField textField_12) {
-		this.textField_12 = textField_12;
 	}
 
 	public JTextField getTextField_13() {
@@ -767,7 +894,7 @@ public class Applicaion_Window {
 	}
 	
 	class shortAnswer{
-	
+		
 		private JTextField textField_7;
 
 		public shortAnswer(char letter ,JPanel panel){
@@ -777,6 +904,24 @@ public class Applicaion_Window {
 			textField_7 = new JTextField();
 			panel.add(textField_7, "growx,wrap");
 			textField_7.setColumns(10);
+		}
+	}
+	
+	class NumericalMultiple{
+		private JSpinner spinner_1;
+		private JTextField textField_12;
+
+		public NumericalMultiple(char letter ,JPanel panel){
+			JLabel lblNewLabel_15 = new JLabel(Character.toString(letter));
+			panel.add(lblNewLabel_15, "alignx trailing");
+			
+			textField_12 = new JTextField();
+			panel.add(textField_12, "span 2,growx");
+			textField_12.setColumns(10);
+			
+			SpinnerModel sm = new SpinnerNumberModel(0, 0, 100, 1);
+			spinner_1 = new JSpinner(sm);
+			panel.add(spinner_1, "wrap");
 		}
 	}
 }
